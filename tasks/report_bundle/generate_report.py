@@ -1,5 +1,6 @@
 """
-create_report.py
+
+This script (generate_report.py) generates a ZIP archive...
 
 This script validates the presence and structure of required files (CSV, config, README),
 checks for missing images listed in results.csv, and packages all content—including the 
@@ -9,7 +10,6 @@ Used for reporting and archiving results of image-based evaluations.
 """
 
 import os
-import json
 import csv
 import zipfile
 
@@ -39,14 +39,18 @@ with open(RESULTS_FILE, newline='') as csvfile:
         if not os.path.exists(row['image_path']):
             raise FileNotFoundError(f"Image file not found: {row['image_path']}")
 
-with zipfile.ZipFile(OUTPUT_ZIP, 'w') as zf:
+with zipfile.ZipFile(OUTPUT_ZIP, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
     zf.write(RESULTS_FILE)
     zf.write(CONFIG_FILE)
     zf.write(README_FILE)
-    
-    for image_file in os.listdir(GRIDS_DIR):
-        full_path = os.path.join(GRIDS_DIR, image_file)
-        if os.path.isfile(full_path):
-            zf.write(full_path, arcname=os.path.join('grids', image_file))
 
-print(f"✅ report.zip created successfully!")
+    for foldername, subfolders, filenames in os.walk(GRIDS_DIR):
+        for filename in filenames:
+            file_path = os.path.join(foldername, filename)
+            arcname = os.path.relpath(file_path, start='.')
+            zf.write(file_path, arcname=arcname)
+
+
+
+
+print("✅ report.zip created successfully!")
