@@ -1,6 +1,8 @@
 {
-  "model": "stable-diffusion",
-  "seed": 42,
-  "steps": 30,
-  "sampler": "Euler"
+    "task_id": "123",
+    "report_type": "Csv",
+    "data": {
+        "title": "My Report",
+        "content": "This is the content of the report."
+    }
 }
